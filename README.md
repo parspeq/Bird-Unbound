@@ -71,3 +71,12 @@ sudo ./migrate-apt-https-only.sh
 - Reconfiguring default routing via BIRD OSPFv3 and DNS resolution via Unbound.
 
 Please carefully review all scripts and configurations (`v0.1/`) to understand their impact on your environment before installation on production or non-isolated systems.
+
+---
+
+## 🌐 IPv6-Only Network Compatibility Notice
+
+**Note on IPv6-Only Limitations:** Because this application enforces a pure IPv6-only network environment and blocks IPv4 connectivity, certain legacy websites, non-dual-stack services, APIs, and older content providers that rely exclusively on IPv4 addresses without IPv6 (AAAA) records will not be reachable. In general, this affects:
+- Legacy websites and self-hosted services lacking IPv6 support.
+- Older corporate or academic portals that have not adopted IPv6 addressing.
+- Certain third-party APIs, CDNs, or authentication providers operating exclusively over IPv4.
