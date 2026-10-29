@@ -9,7 +9,7 @@ This guide provides in-depth technical details, tuning options, and advanced adm
 Bird-Unbound requires a modern Linux kernel with IPv6 enabled and support for `nftables`, `bird2` (BIRD routing daemon v2), and `unbound`.
 
 - **Operating System:** Debian 11/12 or Ubuntu 20.04/22.04+ LTS.
-- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `eth*` (or equivalent interface naming like `enp*` depending on system udev rules). Ensure firewall rules and OSPFv3 interfaces in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) and [`v0.1/bird.conf`](v0.1/bird.conf:1) align with your active interface names.
+- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `e*` (or equivalent interface naming like `e*` depending on system udev rules). Ensure firewall rules and OSPFv3 interfaces in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) and [`v0.1/bird.conf`](v0.1/bird.conf:1) align with your active interface names.
 
 ---
 
@@ -41,7 +41,7 @@ net.ipv6.conf.default.accept_redirects=0
 
 ## 3. Advanced BIRD OSPFv3 Mesh Configuration
 
-[`v0.1/bird.conf`](v0.1/bird.conf:1) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`eth*`).
+[`v0.1/bird.conf`](v0.1/bird.conf:1) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`e*`).
 
 ### Routing Filters & Security
 - **Inbound Filter:**
@@ -63,7 +63,7 @@ net.ipv6.conf.default.accept_redirects=0
 
 ### Interface Timers & Cryptographic Authentication
 ```bird
-interface "eth*" {      
+interface "e*" {      
     type pointopoint;   
     hello 2;           # 2-second hello interval for rapid link-state detection
     dead 6;            # 6-second dead timer (3x hello)
