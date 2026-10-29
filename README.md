@@ -1,0 +1,61 @@
+# Bird-Unbound
+
+Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurationless IPv6 mesh topology. When all participating machines run the application, it automatically establishes an IPv6-only mesh network arrangement that restricts outbound transit exclusively to secure HTTPS connections.
+
+---
+
+## What are BIRD and Unbound?
+
+- **BIRD (`bird2`):** An advanced dynamic routing daemon that handles plug-and-play OSPFv3 mesh routing, securely peering connected nodes and automatically propagating routes across the network without manual intervention.
+- **Unbound (`unbound`):** A high-performance recursive and validating DNS resolver that provides secure, DNSSEC-validated name resolution and local query handling for mesh participants.
+
+---
+
+## Architecture & Components
+
+| Component | File Path | Role |
+| :--- | :--- | :--- |
+| **Installation Script** | [`v0.1/install.sh`](v0.1/install.sh:1) | Installs `bird2` and `unbound`, applies network/firewall configurations, and deploys configuration files. |
+| **Network & Firewall Setup** | [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) | Disables conflicting services (`dnsmasq`, `avahi-daemon`, `cups`), tunes kernel IPv6 parameters, and applies strict `nftables` ingress/forwarding rules permitting only HTTPS egress. |
+| **BIRD Routing Config** | [`v0.1/bird.conf`](v0.1/bird.conf:1) | Configures OSPFv3 dynamic mesh routing with route filters (`::/0`) and cryptographic authentication (HMAC SHA-256). |
+| **Unbound DNS Config** | [`v0.1/unbound.conf`](v0.1/unbound.conf:1) | Configures recursive DNS resolver with IPv6 upstreaming, DNSSEC validation, cache poisoning mitigations, and privacy hardening. |
+| **APT HTTPS Migration** | [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh:1) | Optional utility to migrate APT package sources to HTTPS and enforce strict blocking of unencrypted HTTP fallback. |
+
+---
+
+## Quick Start & Installation
+
+1. Navigate to the release directory:
+   ```bash
+   cd v0.1
+   ```
+2. Execute the installation script with root privileges:
+   ```bash
+   sudo ./install.sh
+   ```
+
+*(Optional)* To enforce strict HTTPS-only package management via APT, uncomment the migration line in [`v0.1/install.sh`](v0.1/install.sh:12) or run:
+```bash
+sudo ./migrate-apt-https-only.sh
+```
+
+---
+
+## Security & Firewall Specifications
+
+- **IPv6-Only Mesh Enforcement:** Disables IPv4 stack at the kernel level and establishes a configurationless peer-to-peer IPv6 routing topology.
+- **Firewall (`nftables`):**
+  - **Input Chain:** Drops all ingress by default; allows loopback, established/related sessions, essential ICMPv6 Neighbor Discovery, BIRD OSPFv3 multicast routing (`iifname "e*"`), and local Unbound DNS queries on port 53.
+  - **Forward Chain:** Drops all forwarding by default; permits outbound HTTPS (TCP 443), DNS (UDP 53), and Debian mirrors (TCP 80 if needed) on `e*` interfaces, restricting all other outbound transit.
+- **Routing Security (`BIRD OSPFv3`):**
+  - Enforces strict import/export filters accepting only default routes (`::/0`).
+  - Implements point-to-point interface settings with 2s hello and 6s dead timers, metric cost `100`, and cryptographic authentication (`SecureIntranetMeshKey123`).
+- **DNS Resolver (`Unbound`):**
+  - Listens on `::0`, `127.0.0.1`, and `::1` on port 53.
+  - Refuses public recursion (`access-control: ::/0 refuse`) while permitting localhost and IPv6 link-local neighbors (`fe80::/10`).
+  - Enables automatic DNSSEC validation (`auto-trust-anchor-file`), hardening against cache poisoning (`harden-glue`, `harden-dnssec-stripped`, `use-caps-for-id`), and qname minimization.
+
+---
+
+## License & Support
+Refer to project documentation and development logs (`TEMP_DEVELOPMENTLOG.md`, [`project-research.md`](project-research.md:1)) for further operational details.
