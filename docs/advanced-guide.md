@@ -117,6 +117,38 @@ To inspect live firewall rules:
 sudo nft list ruleset
 ```
 
+### Firewall Compatibility & Removing Conflicting Packages
+
+Bird-Unbound manages system packet filtering directly via `nftables`. Because other firewall frontends and managers take control of the Linux Netfilter subsystem, **Bird-Unbound may not work correctly if other firewall packages are installed and active.** 
+
+Conflicting firewall packages such as `ufw`, `firewalld`, or `shorewall` will overwrite, flush, or conflict with the project's strict ingress and forwarding ruleset. Before installing and running Bird-Unbound, ensure any conflicting firewalls are disabled and removed:
+
+1. **UFW (Uncomplicated Firewall):**
+   ```bash
+   sudo ufw disable
+   sudo apt remove --purge ufw
+   ```
+2. **Firewalld:**
+   ```bash
+   sudo systemctl stop firewalld
+   sudo systemctl disable firewalld
+   sudo apt remove --purge firewalld
+   ```
+3. **Shorewall:**
+   ```bash
+   sudo systemctl stop shorewall
+   sudo systemctl disable shorewall
+   sudo apt remove --purge shorewall
+   ```
+4. **Docker Network Rules:**
+   If Docker is installed on the gateway, it automatically injects `FORWARD` chains that can bypass strict gateway drop policies. To prevent conflicts, ensure Docker's iptables management is disabled in `/etc/docker/daemon.json`:
+   ```json
+   {
+     "iptables": false
+   }
+   ```
+   *(Restart Docker via `sudo systemctl restart docker` after applying changes).*
+
 ---
 
 ## 6. APT HTTPS-Only Migration
