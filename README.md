@@ -14,11 +14,11 @@ Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurati
 
 | Component | File Path | Role |
 | :--- | :--- | :--- |
-| **Installation Script** | [`v0.1/install.sh`](v0.1/install.sh:1) | Installs `bird2` and `unbound`, applies network/firewall configurations, and deploys configuration files. |
-| **Network & Firewall Setup** | [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) | Disables conflicting services (`dnsmasq`, `avahi-daemon`, `cups`), tunes kernel IPv6 parameters, and applies strict `nftables` ingress/forwarding rules permitting only HTTPS egress. |
-| **BIRD Routing Config** | [`v0.1/bird.conf`](v0.1/bird.conf:1) | Configures OSPFv3 dynamic mesh routing with route filters (`::/0`) and cryptographic authentication (HMAC SHA-256). |
-| **Unbound DNS Config** | [`v0.1/unbound.conf`](v0.1/unbound.conf:1) | Configures recursive DNS resolver with IPv6 upstreaming, DNSSEC validation, cache poisoning mitigations, and privacy hardening. |
-| **APT HTTPS Migration** | [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh:1) | Optional utility to migrate APT package sources to HTTPS and enforce strict blocking of unencrypted HTTP fallback. |
+| **Installation Script** | [`v0.1/install.sh`](v0.1/install.sh) | Installs `bird2` and `unbound`, applies network/firewall configurations, and deploys configuration files. |
+| **Network & Firewall Setup** | [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) | Disables conflicting services (`dnsmasq`, `avahi-daemon`, `cups`), tunes kernel IPv6 parameters, and applies strict `nftables` ingress/forwarding rules permitting only HTTPS egress. |
+| **BIRD Routing Config** | [`v0.1/bird.conf`](v0.1/bird.conf) | Configures OSPFv3 dynamic mesh routing with route filters (`::/0`) and cryptographic authentication (HMAC SHA-256). |
+| **Unbound DNS Config** | [`v0.1/unbound.conf`](v0.1/unbound.conf) | Configures recursive DNS resolver with IPv6 upstreaming, DNSSEC validation, cache poisoning mitigations, and privacy hardening. |
+| **APT HTTPS Migration** | [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh) | Optional utility to migrate APT package sources to HTTPS and enforce strict blocking of unencrypted HTTP fallback. |
 
 ---
 
@@ -33,7 +33,7 @@ Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurati
    sudo ./install.sh
    ```
 
-*(Optional)* To enforce strict HTTPS-only package management via APT, uncomment the migration line in [`v0.1/install.sh`](v0.1/install.sh:12) or run:
+*(Optional)* To enforce strict HTTPS-only package management via APT, uncomment the migration line in [`v0.1/install.sh`](v0.1/install.sh) or run:
 ```bash
 sudo ./migrate-apt-https-only.sh
 ```
