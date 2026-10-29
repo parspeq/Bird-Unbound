@@ -9,13 +9,13 @@ This guide provides in-depth technical details, tuning options, and advanced adm
 Bird-Unbound requires a modern Linux kernel with IPv6 enabled and support for `nftables`, `bird2` (BIRD routing daemon v2), and `unbound`.
 
 - **Operating System:** Debian 11/12 or Ubuntu 20.04/22.04+ LTS.
-- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `e*` (or equivalent interface naming like `e*` depending on system udev rules). Ensure firewall rules and OSPFv3 interfaces in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) and [`v0.1/bird.conf`](v0.1/bird.conf:1) align with your active interface names.
+- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `e*` (or equivalent interface naming like `e*` depending on system udev rules). Ensure firewall rules and OSPFv3 interfaces in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) and [`v0.1/bird.conf`](v0.1/bird.conf) align with your active interface names.
 
 ---
 
 ## 2. Kernel Parameter Tuning (`sysctl`)
 
-[`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) applies kernel parameters to disable IPv4 entirely and harden IPv6 forwarding:
+[`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) applies kernel parameters to disable IPv4 entirely and harden IPv6 forwarding:
 
 ```ini
 net.ipv4.conf.all.disable_ipv4=1
@@ -41,7 +41,7 @@ net.ipv6.conf.default.accept_redirects=0
 
 ## 3. Advanced BIRD OSPFv3 Mesh Configuration
 
-[`v0.1/bird.conf`](v0.1/bird.conf:1) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`e*`).
+[`v0.1/bird.conf`](v0.1/bird.conf) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`e*`).
 
 ### Routing Filters & Security
 - **Inbound Filter:**
@@ -81,7 +81,7 @@ interface "e*" {
 
 ## 4. Unbound Recursive DNS Hardening
 
-[`v0.1/unbound.conf`](v0.1/unbound.conf:1) configures Unbound with enterprise privacy and security defaults:
+[`v0.1/unbound.conf`](v0.1/unbound.conf) configures Unbound with enterprise privacy and security defaults:
 
 - **Upstream Query Transport:**
   - `do-ip6: yes`
@@ -103,7 +103,7 @@ interface "e*" {
 
 ## 5. nftables Firewall Architecture
 
-The firewall rules defined in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:37) enforce a zero-trust posture:
+The firewall rules defined in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) enforce a zero-trust posture:
 
 - **Input Chain (Gateway Protection):**
   - Permits loopback (`lo`), established/related sessions, and ICMPv6 neighbor discovery/PMTUD (`ip6 nexthdr icmpv6 accept`).
@@ -153,7 +153,7 @@ Conflicting firewall packages such as `ufw`, `firewalld`, or `shorewall` will ov
 
 ## 6. APT HTTPS-Only Migration
 
-To eliminate unencrypted package retrieval (`http://`), run [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh:1):
+To eliminate unencrypted package retrieval (`http://`), run [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh):
 
 1. Backs up existing `/etc/apt/sources.list` and `/etc/apt/sources.list.d/` into a timestamped directory.
 2. Rewrites repository URIs from `http://` to `https://` (excluding localhost).
@@ -162,4 +162,4 @@ To eliminate unencrypted package retrieval (`http://`), run [`v0.1/migrate-apt-h
    Acquire::http::Proxy "false";
    Acquire::BlockHTTP "true";
    ```
-4. **Firewall Adjustment for Port 80:** When fully migrating to HTTPS-only package management, remember to comment out or remove the rule in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh:1) that permits outbound TCP port 80 traffic (`iifname "e*" tcp dport 80 accept`), ensuring your firewall strictly permits only secure HTTPS (443) and DNS (53) transit.
+4. **Firewall Adjustment for Port 80:** When fully migrating to HTTPS-only package management, remember to comment out or remove the rule in [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) that permits outbound TCP port 80 traffic (`iifname "e*" tcp dport 80 accept`), ensuring your firewall strictly permits only secure HTTPS (443) and DNS (53) transit.
