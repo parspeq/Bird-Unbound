@@ -1,6 +1,5 @@
 # Bird-Unbound
-
-Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurationless IPv6 mesh topology. When all participating machines run the application, it automatically establishes an IPv6-only mesh network arrangement that restricts outbound transit exclusively to secure HTTPS connections.
+Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurationless IPv6 mesh topology. When all participating machines run the application, it automatically establishes an IPv6-only mesh network arrangement that restricts outbound transit exclusively to secure HTTPS connections. Bird-Unbound (`v0.1`) has no function other than securely configuring the BIRD routing daemon (`bird2`) and the Unbound recursive DNS resolver (`unbound`). By configuring these packages, it enables the easy and secure setup of a configurationless IPv6 mesh topology.
 
 ---
 
@@ -57,5 +56,18 @@ sudo ./migrate-apt-https-only.sh
 
 ---
 
-## License & Support
-Refer to project documentation and development logs (`TEMP_DEVELOPMENTLOG.md`, [`project-research.md`](project-research.md:1)) for further operational details.
+## Documentation & Further Reading
+- **[Advanced Installation & Configuration Guide](docs/advanced-guide.md)**: Deep-dive instructions on kernel tuning, OSPFv3 mesh parameters, Unbound hardening, firewall rules, and APT HTTPS migration.
+- **[Project Research Report](project-research.md)**: Comprehensive technical breakdown of the architecture and implementation details.
+
+---
+
+## ⚠️ Important Warning & Configuration Notice
+
+**Warning:** Installing and running Bird-Unbound makes significant, system-wide modifications to your host network configuration. These changes include:
+- Disabling the IPv4 network stack at the kernel level.
+- Overwriting system firewall rules (`nftables`) with a zero-trust policy that blocks unapproved ingress and egress.
+- Disabling and masking conflicting network services (`dnsmasq`, `avahi-daemon`, `cups`).
+- Reconfiguring default routing via BIRD OSPFv3 and DNS resolution via Unbound.
+
+Please carefully review all scripts and configurations (`v0.1/`) to understand their impact on your environment before installation on production or non-isolated systems.
