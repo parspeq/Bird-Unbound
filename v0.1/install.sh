@@ -1,5 +1,4 @@
 #!/bin/bash
-sudo apt install -y bird2 unbound
 sudo ./bird-unbound.sh
 
 # Generate timestamped backup for unbound.conf if it exists

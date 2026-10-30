@@ -26,12 +26,15 @@ Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurati
 ---
 
 ## Quick Start & Installation
-
-1. Navigate to the release directory:
+1. Install Bird2 and Unbound
+  ```bash
+  sudo apt install -y bird2 unbound
+  ```
+2. Navigate to the release directory:
    ```bash
    cd v0.1
    ```
-2. Execute the installation script with root privileges:
+3. Execute the installation script with root privileges:
    ```bash
    sudo ./install.sh
    ```
