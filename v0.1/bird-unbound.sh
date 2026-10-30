@@ -73,6 +73,8 @@ table inet filter {
         # Strict Outbound Policy: Only allow the internal plug-and-play ports (eth*)
         #    to exit to the internet if they are using HTTPS (443) or DNS (53)
         iifname "e*" tcp dport 443 accept
+        iifname "e*" udp dport 443 accept
+        iifname "e*" tcp dport 53 accept
         iifname "e*" udp dport 53 accept
         
         # Allows Debian package mirrors and OCSP
