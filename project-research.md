@@ -11,6 +11,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 - **File Path:** [`v0.1/install.sh`](v0.1/install.sh)
 - **Role:** Installs `bird2` and `unbound`, executes [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) to configure system services, kernel parameters, and nftables firewall rules, and deploys configuration files.
 - **Dynamic Router ID Generation:** Automatically computes a deterministic 32-bit pseudo-IPv4 router ID derived from [`/etc/machine-id`](/etc/machine-id) using `md5sum` and `perl`, substituting it dynamically into `/etc/bird/bird.conf` during installation to prevent OSPFv3 routing ID collisions across mesh participants.
+- **Pre-Deployment Configuration Backups:** Automatically generates timestamped backups (e.g., `-old-YYYYMMDD-HHMMSS`) of existing configuration files (`/etc/bird/bird.conf`, `/etc/unbound/unbound.conf`, `/etc/nftables.conf`) in their respective directories prior to overwriting them during deployment.
 
 ### 2. Network & Firewall Configuration
 - **File Path:** [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)
@@ -40,6 +41,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 - **File Path:** [`v0.1/unbound.conf`](v0.1/unbound.conf)
 - **Networking:** Listens on `::0`, `127.0.0.1`, and `::1` on port 53 ([`v0.1/bird.conf`](v0.1/bird.conf)). Enables IPv6 upstream queries (`do-ip6: yes`) and disables IPv4 upstream queries (`do-ip4: no`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
 - **Access Control:** Refuses all public queries (`access-control: ::/0 refuse`) while explicitly permitting localhost (`::1`, `127.0.0.1`) and IPv6 link-local neighbors (`fe80::/10`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
+- **DoS Mitigation:** Generous rate limiting (`ip-ratelimit: 1000`, `ratelimit: 1000`) enabled to protect against query floods and amplification attempts without impacting legitimate mesh traffic.
 - **Security & Privacy:** Automatic DNSSEC validation (`auto-trust-anchor-file`), cache poisoning mitigations (`harden-glue`, `harden-dnssec-stripped`, `use-caps-for-id`), and privacy enhancements (`hide-identity`, `hide-version`, `qname-minimization`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
 
 ### 5. APT HTTPS-Only Migration Tool
