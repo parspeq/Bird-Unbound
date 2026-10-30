@@ -33,6 +33,11 @@ echo "net.ipv6.conf.default.accept_redirects=0" | sudo tee -a /etc/sysctl.conf
 # Apply sysctl settings immediately
 sudo sysctl -p
 
+# Generate timestamped backup for nftables.conf if it exists
+if [ -f /etc/nftables.conf ]; then
+    sudo cp /etc/nftables.conf "/etc/nftables.conf-old-$(date +%Y%m%d-%H%M%S)"
+fi
+
 # Rewrite the nftables configuration file to permit ICMPv6 forwarding
 sudo tee /etc/nftables.conf << 'EOF'
 #!/usr/sbin/nft -f
