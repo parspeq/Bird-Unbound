@@ -76,6 +76,7 @@ table inet filter {
         iifname "[ewubif]*" udp dport 443 accept
         iifname "[ewubif]*" tcp dport 53 accept
         iifname "[ewubif]*" udp dport 53 accept
+        iifname "[ewubif]*" udp dport 123 accept
         
         # Allows Debian package mirrors and OCSP
         iifname "[ewubif]*" tcp dport 80 accept
