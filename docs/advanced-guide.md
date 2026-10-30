@@ -9,7 +9,7 @@ This guide provides in-depth technical details, tuning options, and advanced adm
 Bird-Unbound requires a modern Linux kernel with IPv6 enabled and support for `nftables`, `bird2` (BIRD routing daemon v2), and `unbound`.
 
 - **Operating System:** Debian 11/12 or Ubuntu 20.04/22.04+ LTS.
-- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `[ewu]*` (or equivalent interface naming like `[ewu]*` depending on system udev rules). Ensure firewall rules are applied on the appropriate interfaces before deployment.
+- **Network Interface Naming:** Configuration scripts target network interfaces matching pattern `[ewubif]*` (or equivalent interface naming like `[ewubif]*` depending on system udev rules). Ensure firewall rules are applied on the appropriate interfaces before deployment.
 
 ---
 
@@ -41,7 +41,7 @@ net.ipv6.conf.default.accept_redirects=0
 
 ## 3. Advanced BIRD OSPFv3 Mesh Configuration
 
-[`../v0.1/bird.conf`](../v0.1/bird.conf) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`[ewu]*`).
+[`../v0.1/bird.conf`](../v0.1/bird.conf) establishes an OSPFv3 routing mesh across dynamic internal interfaces (`[ewubif]*`).
 
 ### When Do You Need OSPFv3 Mesh Routing?
 For a simple, flat star-topology network (where every machine connects directly to the same home router or switch), dynamic routing software like BIRD is not strictly necessary because each machine can independently learn its default gateway via IPv6 Router Advertisements (RAs). 
@@ -73,7 +73,7 @@ However, Bird-Unbound's OSPFv3 mesh routing is designed for topologies requiring
 
 ### Interface Timers & Cryptographic Authentication
 ```bird
-interface "[ewu]*" {      
+interface "[ewubif]*" {      
     type pointopoint;   
     hello 2;           # 2-second hello interval for rapid link-state detection
     dead 6;            # 6-second dead timer (3x hello)
@@ -117,9 +117,9 @@ The firewall rules defined in [`../v0.1/bird-unbound.sh`](../v0.1/bird-unbound.s
 
 - **Input Chain (Gateway Protection):**
   - Permits loopback (`lo`), established/related sessions, and ICMPv6 neighbor discovery/PMTUD (`ip6 nexthdr icmpv6 accept`).
-  - Permits OSPFv3 multicast routing (`ip6 nexthdr ospf`) and local DNS queries on port 53 from internal interfaces (`iifname "[ewu]*"`).
+  - Permits OSPFv3 multicast routing (`ip6 nexthdr ospf`) and local DNS queries on port 53 from internal interfaces (`iifname "[ewubif]*"`).
 - **Forward Chain (Transit Filtering):**
-  - Restricts internal forwarding (`iifname "[ewu]*"`) to TCP 443 (HTTPS), UDP 53 (DNS), and TCP 80 (Debian package mirrors).
+  - Restricts internal forwarding (`iifname "[ewubif]*"`) to TCP 443 (HTTPS), UDP 53 (DNS), and TCP 80 (Debian package mirrors).
   - Drops all unapproved forwarding traffic by default.
 
 To inspect live firewall rules:

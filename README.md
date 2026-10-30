@@ -47,8 +47,8 @@ sudo ./migrate-apt-https-only.sh
 
 - **IPv6-Only Mesh Enforcement:** Disables IPv4 stack at the kernel level and establishes a configurationless peer-to-peer IPv6 routing topology.
 - **Firewall (`nftables`):**
-  - **Input Chain:** Drops all ingress by default; allows loopback, established/related sessions, essential ICMPv6 Neighbor Discovery, BIRD OSPFv3 multicast routing (`iifname "[ewu]*"`), and local Unbound DNS queries on port 53.
-  - **Forward Chain:** Drops all forwarding by default; permits outbound HTTPS (TCP 443), DNS (UDP 53), and Debian mirrors (TCP 80 if needed) on `[ewu]*` interfaces, restricting all other outbound transit.
+  - **Input Chain:** Drops all ingress by default; allows loopback, established/related sessions, essential ICMPv6 Neighbor Discovery, BIRD OSPFv3 multicast routing (`iifname "[ewubif]*"`), and local Unbound DNS queries on port 53.
+  - **Forward Chain:** Drops all forwarding by default; permits outbound HTTPS (TCP 443), DNS (UDP 53), and Debian mirrors (TCP 80 if needed) on `[ewubif]*` interfaces, restricting all other outbound transit.
 - **Routing Security (`BIRD OSPFv3`):**
   - Enforces strict import/export filters accepting only default routes (`::/0`).
   - Implements point-to-point interface settings with 2s hello and 6s dead timers, metric cost `100`, and cryptographic authentication (`SecureIntranetMeshKey123`).

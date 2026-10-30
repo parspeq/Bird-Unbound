@@ -21,8 +21,8 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
   - Disables IPv4 via `net.ipv4.conf.all.disable_ipv4=1` and `net.ipv4.conf.default.disable_ipv4=1` ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
   - Configures IPv6 forwarding, Router Advertisements (`accept_ra=2`), and temporary addresses (`use_tempaddr=2`) ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
 - **Firewall Rules (`nftables`):**
-  - **Input Chain:** Drops all ingress by default, permitting loopback traffic, established/related sessions, essential ICMPv6 (`ip6 nexthdr icmpv6 accept`), and BIRD OSPFv3 multicast routing on `[ewu]*` interfaces ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
-  - **Forward Chain:** Drops all forwarding by default, allowing outbound TCP port 443, UDP/TCP port 53, and TCP port 80 (for Debian mirrors) on `[ewu]*` interfaces, along with returning traffic ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
+  - **Input Chain:** Drops all ingress by default, permitting loopback traffic, established/related sessions, essential ICMPv6 (`ip6 nexthdr icmpv6 accept`), and BIRD OSPFv3 multicast routing on `[ewubif]*` interfaces ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
+  - **Forward Chain:** Drops all forwarding by default, allowing outbound TCP port 443, UDP/TCP port 53, and TCP port 80 (for Debian mirrors) on `[ewubif]*` interfaces, along with returning traffic ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
 
 ### 3. BIRD Routing Daemon Configuration
 - **File Path:** [`v0.1/bird.conf`](v0.1/bird.conf)
@@ -32,7 +32,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
   - `protocol device`: Monitors network interfaces ([`v0.1/bird.conf`](v0.1/bird.conf)).
   - `protocol ospf v3 intranet_mesh`: Handles plug-and-play IPv6 routing ([`v0.1/bird.conf`](v0.1/bird.conf)).
     - **Import/Export Filters:** Accepts and exports only default routes (`::/0`), preventing rogue path injections ([`v0.1/bird.conf`](v0.1/bird.conf)).
-    - **Interface Settings (`[ewu]*`):** Point-to-point type, 2s hello timer, 6s dead timer, static metric cost of `100`, and cryptographic authentication using HMAC SHA-256 (`SecureIntranetMeshKey123`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
+    - **Interface Settings (`[ewubif]*`):** Point-to-point type, 2s hello timer, 6s dead timer, static metric cost of `100`, and cryptographic authentication using HMAC SHA-256 (`SecureIntranetMeshKey123`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
 
 ### 4. Unbound DNS Resolver Configuration
 - **File Path:** [`v0.1/unbound.conf`](v0.1/unbound.conf)
