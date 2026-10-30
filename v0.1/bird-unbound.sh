@@ -75,7 +75,7 @@ table inet filter {
         iifname "e*" tcp dport 443 accept
         iifname "e*" udp dport 53 accept
         
-        # Allows Debian package mirrors
+        # Allows Debian package mirrors and OCSP
         iifname "e*" tcp dport 80 accept
 
         # Allow returning internet traffic back into your internal machines
