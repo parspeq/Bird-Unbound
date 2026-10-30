@@ -9,7 +9,8 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 
 ### 1. Installation & Orchestration Script
 - **File Path:** [`v0.1/install.sh`](v0.1/install.sh)
-- **Role:** Installs `bird2` and `unbound`, executes [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) to configure system services, kernel parameters, and nftables firewall rules, and deploys configuration files to [`/etc/unbound/unbound.conf`](v0.1/unbound.conf) and [`/etc/bird/bird.conf`](v0.1/bird.conf).
+- **Role:** Installs `bird2` and `unbound`, executes [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) to configure system services, kernel parameters, and nftables firewall rules, and deploys configuration files.
+- **Dynamic Router ID Generation:** Automatically computes a deterministic 32-bit pseudo-IPv4 router ID derived from [`/etc/machine-id`](/etc/machine-id) using `md5sum` and `perl`, substituting it dynamically into `/etc/bird/bird.conf` during installation to prevent OSPFv3 routing ID collisions across mesh participants.
 
 ### 2. Network & Firewall Configuration
 - **File Path:** [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)
@@ -18,7 +19,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
   - Disables `avahi-daemon.service` ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
   - Disables and masks `cups.service`, `cups.socket`, and `cups.path` ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
 - **Kernel Parameter Tuning:**
-  - Disables IPv4 via `net.ipv4.conf.all.disable_ipv4=1` and `net.ipv4.conf.default.disable_ipv4=1` ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
+  - Disables IPv4 via `net.ipv4.conf.all.disable_ipv4=1` and `net.ipv4.conf.default.disable_ipv4=1` ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)). *(Note: Well-suited for pure IPv6 desktop endpoints, but can impact servers and container runtimes expecting IPv4 loopback).*
   - Configures IPv6 forwarding, Router Advertisements (`accept_ra=2`), and temporary addresses (`use_tempaddr=2`) ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
 - **Firewall Rules (`nftables`):**
   - **Input Chain:** Drops all ingress by default, permitting loopback traffic, established/related sessions, essential ICMPv6 (`ip6 nexthdr icmpv6 accept`), and BIRD OSPFv3 multicast routing on `[ewubif]*` interfaces ([`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)).
@@ -26,13 +27,14 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 
 ### 3. BIRD Routing Daemon Configuration
 - **File Path:** [`v0.1/bird.conf`](v0.1/bird.conf)
-- **Router ID:** Defined as `1.1.1.1` ([`v0.1/bird.conf`](v0.1/bird.conf)).
+- **Router ID:** Dynamically generated per node during installation via [`v0.1/install.sh`](v0.1/install.sh).
 - **Protocols:**
   - `protocol kernel`: Syncs IPv6 routes bi-directionally with the operating system kernel ([`v0.1/bird.conf`](v0.1/bird.conf)).
-  - `protocol device`: Monitors network interfaces ([`v0.1/bird.conf`](v0.1/bird.conf)).
+  - `protocol device`: Monitors network interfaces with a 10s scan interval ([`v0.1/bird.conf`](v0.1/bird.conf)).
   - `protocol ospf v3 intranet_mesh`: Handles plug-and-play IPv6 routing ([`v0.1/bird.conf`](v0.1/bird.conf)).
-    - **Import/Export Filters:** Accepts and exports only default routes (`::/0`), preventing rogue path injections ([`v0.1/bird.conf`](v0.1/bird.conf)).
-    - **Interface Settings (`[ewubif]*`):** Point-to-point type, 2s hello timer, 6s dead timer, static metric cost of `100`, and cryptographic authentication using HMAC SHA-256 (`SecureIntranetMeshKey123`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
+    - **Martian Prefix Filtering (`MARTIANS_V6`):** Explicitly defines reserved/bogon/loopback/link-local/multicast IPv6 prefixes (`::1/128`, `fe80::/10`, `ff00::/8`, etc.) and rejects them in import and export filters.
+    - **Import/Export Filters:** Accepts and exports only default routes (`::/0`) while filtering martians, preventing rogue path injections ([`v0.1/bird.conf`](v0.1/bird.conf)).
+    - **Interface Settings (`[ewubif]*`):** Point-to-point type, 2s hello timer, 6s/10s dead timer, static metric cost of `100`, and cryptographic authentication using HMAC SHA-256 (`SecureIntranetMeshKey123`) ([`v0.1/bird.conf`](v0.1/bird.conf)).
 
 ### 4. Unbound DNS Resolver Configuration
 - **File Path:** [`v0.1/unbound.conf`](v0.1/unbound.conf)
@@ -42,7 +44,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 
 ### 5. APT HTTPS-Only Migration Tool
 - **File Path:** [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh)
-- **Role:** Backs up existing APT sources, replaces HTTP repositories with HTTPS in (/etc/apt/sources.list) and (/etc/apt/sources.list.d/). Enforces strict blocking of unencrypted HTTP fallback transport via (/etc/apt/apt.conf.d/99force-https).
+- **Role:** Backs up existing APT sources, replaces HTTP repositories with HTTPS in `/etc/apt/sources.list` and `/etc/apt/sources.list.d/`. Enforces strict blocking of unencrypted HTTP fallback transport via `/etc/apt/apt.conf.d/99force-https`.
 
 ---
 
