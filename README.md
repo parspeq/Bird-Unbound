@@ -68,7 +68,7 @@ sudo ./migrate-apt-https-only.sh
 ## ⚠️ Important Warning & Configuration Notice
 
 **Warning:** Installing and running Bird-Unbound makes significant, system-wide modifications to your host network configuration. These changes include:
-- Disabling the IPv4 network stack at the kernel level.
+- Disabling the IPv4 network stack at the kernel level (`net.ipv4.conf.all.disable_ipv4=1`). While well-suited and fully functional for pure IPv6 desktop endpoints, kernel-level IPv4 removal can impact servers, multi-tenant nodes, container runtimes (Docker, Podman, Kubernetes), and legacy server software that hardcodes IPv4 loopback (`127.0.0.1`) or requires `AF_INET` socket support.
 - Overwriting system firewall rules (`nftables`) with a zero-trust policy that blocks unapproved ingress and egress.
 - Disabling and masking conflicting network services (`dnsmasq`, `avahi-daemon`, `cups`).
 - Reconfiguring default routing via BIRD OSPFv3 and DNS resolution via Unbound.
