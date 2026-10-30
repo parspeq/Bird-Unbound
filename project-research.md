@@ -42,7 +42,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 
 ### 5. APT HTTPS-Only Migration Tool
 - **File Path:** [`v0.1/migrate-apt-https-only.sh`](v0.1/migrate-apt-https-only.sh)
-- **Role:** Backs up existing APT sources, replaces HTTP repositories with HTTPS in [`/etc/apt/sources.list`](v0.1/migrate-apt-https-only.sh) and [`/etc/apt/sources.list.d/`](v0.1/migrate-apt-https-only.sh), and enforces strict blocking of unencrypted HTTP fallback transport via [`/etc/apt/apt.conf.d/99force-https`](v0.1/migrate-apt-https-only.sh).
+- **Role:** Backs up existing APT sources, replaces HTTP repositories with HTTPS in /etc/apt/sources.list and /etc/apt/sources.list.d/. Enforces strict blocking of unencrypted HTTP fallback transport via /etc/apt/apt.conf.d/99force-https
 
 ---
 
