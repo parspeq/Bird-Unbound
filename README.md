@@ -6,7 +6,10 @@ Bird-Unbound (`v0.1`) is designed for the easy and secure setup of a configurati
 ## What are BIRD and Unbound?
 
 - **BIRD (`bird2`):** An advanced dynamic routing daemon that handles plug-and-play OSPFv3 mesh routing, securely peering connected nodes and automatically propagating routes across the network without manual intervention.
+ 
 - **Unbound (`unbound`):** A high-performance recursive and validating DNS resolver that provides secure, DNSSEC-validated name resolution and local query handling for mesh participants.
+
+*(Note: For a simple, flat star-topology network where every machine plugs directly into a single home router or switch, BIRD is not strictly necessary as machines learn gateways via IPv6 Router Advertisements. However, BIRD is essential for mesh, multi-hop, and ad-hoc network topologies. Unbound is essential to ensuring DNS for the varied topologies.)*
 
 ---
 
@@ -44,8 +47,8 @@ sudo ./migrate-apt-https-only.sh
 
 - **IPv6-Only Mesh Enforcement:** Disables IPv4 stack at the kernel level and establishes a configurationless peer-to-peer IPv6 routing topology.
 - **Firewall (`nftables`):**
-  - **Input Chain:** Drops all ingress by default; allows loopback, established/related sessions, essential ICMPv6 Neighbor Discovery, BIRD OSPFv3 multicast routing (`iifname "e*"`), and local Unbound DNS queries on port 53.
-  - **Forward Chain:** Drops all forwarding by default; permits outbound HTTPS (TCP 443), DNS (UDP 53), and Debian mirrors (TCP 80 if needed) on `e*` interfaces, restricting all other outbound transit.
+  - **Input Chain:** Drops all ingress by default; allows loopback, established/related sessions, essential ICMPv6 Neighbor Discovery, BIRD OSPFv3 multicast routing (`iifname "[ewu]*"`), and local Unbound DNS queries on port 53.
+  - **Forward Chain:** Drops all forwarding by default; permits outbound HTTPS (TCP 443), DNS (UDP 53), and Debian mirrors (TCP 80 if needed) on `[ewu]*` interfaces, restricting all other outbound transit.
 - **Routing Security (`BIRD OSPFv3`):**
   - Enforces strict import/export filters accepting only default routes (`::/0`).
   - Implements point-to-point interface settings with 2s hello and 6s dead timers, metric cost `100`, and cryptographic authentication (`SecureIntranetMeshKey123`).

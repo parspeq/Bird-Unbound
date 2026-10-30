@@ -57,11 +57,11 @@ table inet filter {
         ip6 nexthdr icmpv6 accept
 
         # Allow BIRD OSPFv3 multicast routing traffic from your internal neighbors
-        iifname "e*" ip6 nexthdr ospf accept
+        iifname "[ewu]*" ip6 nexthdr ospf accept
         
         # Allow internal clients to query local Unbound DNS resolver on port 53
-        iifname "e*" udp dport 53 accept
-        iifname "e*" tcp dport 53 accept
+        iifname "[ewu]*" udp dport 53 accept
+        iifname "[ewu]*" tcp dport 53 accept
     }
 
     # -------------------------------------------------------------------------
@@ -72,16 +72,16 @@ table inet filter {
 
         # Strict Outbound Policy: Only allow the internal plug-and-play ports (eth*)
         #    to exit to the internet if they are using HTTPS (443) or DNS (53)
-        iifname "e*" tcp dport 443 accept
-        iifname "e*" udp dport 443 accept
-        iifname "e*" tcp dport 53 accept
-        iifname "e*" udp dport 53 accept
+        iifname "[ewu]*" tcp dport 443 accept
+        iifname "[ewu]*" udp dport 443 accept
+        iifname "[ewu]*" tcp dport 53 accept
+        iifname "[ewu]*" udp dport 53 accept
         
         # Allows Debian package mirrors and OCSP
-        iifname "e*" tcp dport 80 accept
+        iifname "[ewu]*" tcp dport 80 accept
 
         # Allow returning internet traffic back into your internal machines
-        oifname "e*" ct state established,related accept
+        oifname "[ewu]*" ct state established,related accept
     }
 
     # -------------------------------------------------------------------------
