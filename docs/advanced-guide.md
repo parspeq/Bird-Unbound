@@ -131,7 +131,9 @@ sudo nft list ruleset
 
 Bird-Unbound manages system packet filtering directly via `nftables`. Because other firewall frontends and managers take control of the Linux Netfilter subsystem, **Bird-Unbound may not work correctly** when multiple packet filters are active simultaneously.
 
-Conflicting firewall packages such as `ufw`, `firewalld`, or `shorewall` will overwrite, flush, or conflict with the project's strict ingress and forwarding ruleset. Before installing and running Bird-Unbound, disable any conflicting services.
+Conflicting firewall packages such as `ufw`, `firewalld`, or `shorewall` will overwrite, flush, or conflict with the project's strict ingress and forwarding ruleset. 
+
+**Recommendation:** If you do not have user-customized firewall settings or corporate policy requirements, **it is strongly recommended to completely uninstall conflicting firewall packages immediately prior to installing Bird-Unbound** to prevent rule corruption and ensure clean nftables enforcement. The installation script includes a pre-flight check that will automatically detect and abort if any competing firewall services remain active or enabled.
 
 1. **UFW (Uncomplicated Firewall):**
    ```bash

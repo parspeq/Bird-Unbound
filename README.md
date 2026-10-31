@@ -75,7 +75,7 @@ sudo ./migrate-apt-https-only.sh
 - Overwriting system firewall rules (`nftables`) with a zero-trust policy that blocks unapproved ingress and egress.
 - Disabling and masking conflicting network services (`dnsmasq`, `avahi-daemon`, `cups`).
 - Reconfiguring default routing via BIRD OSPFv3 and DNS resolution via Unbound.
-- **Firewall Package Conflicts:** Bird-Unbound manages `nftables` directly. It currently **may not work correctly** if other firewall frontends or managers (such as `ufw`, `firewalld`, or `shorewall`) are installed, enabled, or active, as they will overwrite or conflict with the project's strict firewall ruleset.
+- **Firewall Package Conflicts:** Bird-Unbound manages `nftables` directly and includes a pre-flight conflict audit. It will abort installation if conflicting firewall managers (`ufw`, `firewalld`, `shorewall`) are active or enabled. If you lack custom or corporate firewall rules, it is recommended to uninstall competing firewalls prior to setup.
 
 Please carefully review all scripts and configurations (`v0.1/`) to understand their impact on your environment before installation on production or non-isolated systems.
 
