@@ -1,4 +1,15 @@
 #!/bin/bash
+
+# Pre-flight firewall conflict audit
+for fw in ufw firewalld shorewall; do
+    if systemctl is-active --quiet "$fw" 2>/dev/null || systemctl is-enabled --quiet "$fw" 2>/dev/null; then
+        echo "❌ [ERROR] Conflicting firewall manager active or enabled: $fw" >&2
+        echo "   Bird-Unbound enforces nftables rules directly. Please disable $fw before installation:" >&2
+        echo "   sudo systemctl disable --now $fw" >&2
+        exit 1
+    fi
+done
+
 sudo ./bird-unbound.sh
 
 # Generate timestamped backup for unbound.conf if it exists

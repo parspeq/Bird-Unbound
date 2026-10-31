@@ -12,6 +12,7 @@ Bird-Unbound (`v0.1`) is a lightweight networking and DNS security configuration
 - **Role:** Installs `bird2` and `unbound`, executes [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh) to configure system services, kernel parameters, and nftables firewall rules, and deploys configuration files.
 - **Dynamic Router ID Generation:** Automatically computes a deterministic 32-bit pseudo-IPv4 router ID derived from [`/etc/machine-id`](/etc/machine-id) using `md5sum` and `perl`, substituting it dynamically into `/etc/bird/bird.conf` during installation to prevent OSPFv3 routing ID collisions across mesh participants.
 - **Pre-Deployment Configuration Backups:** Automatically generates timestamped backups (e.g., `-old-YYYYMMDD-HHMMSS`) of existing configuration files (`/etc/bird/bird.conf`, `/etc/unbound/unbound.conf`, `/etc/nftables.conf`) in their respective directories prior to overwriting them during deployment.
+- **Pre-Flight Firewall Conflict Audit:** Scans for conflicting firewall managers (`ufw`, `firewalld`, `shorewall`) during installation and aborts safely with remediation guidance if any are active or enabled.
 
 ### 2. Network & Firewall Configuration
 - **File Path:** [`v0.1/bird-unbound.sh`](v0.1/bird-unbound.sh)
