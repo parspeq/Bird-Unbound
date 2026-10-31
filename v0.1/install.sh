@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Pre-flight package check: ensure bird2 and unbound are installed
+for pkg in bird2 unbound; do
+    if ! dpkg -l | grep -qw "$pkg" 2>/dev/null && ! command -v "$pkg" >/dev/null 2>&1; then
+        echo "❌ [ERROR] Required package not found: $pkg" >&2
+        echo "   Please install bird2 and unbound first:" >&2
+        echo "   sudo apt update && sudo apt install -y bird2 unbound" >&2
+        exit 1
+    fi
+done
+
 # Pre-flight firewall conflict audit
 for fw in ufw firewalld shorewall; do
     if systemctl is-active --quiet "$fw" 2>/dev/null || systemctl is-enabled --quiet "$fw" 2>/dev/null; then
