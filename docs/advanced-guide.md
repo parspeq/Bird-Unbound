@@ -175,3 +175,30 @@ To eliminate unencrypted package retrieval (`http://`), run [`../v0.1/migrate-ap
    Acquire::BlockHTTP "true";
    ```
 4. **Firewall Adjustment for Port 80:** When fully migrating to HTTPS-only package management, remember to comment out or remove the rule in [`../v0.1/bird-unbound.sh`](../v0.1/bird-unbound.sh) that permits outbound HTTP traffic before finalizing the change.
+
+---
+
+## 7. Uninstallation & Reversal
+
+To completely revert system modifications made by Bird-Unbound and restore pre-installation configurations, run the uninstallation script:
+
+```bash
+cd v0.1
+sudo ./uninstall.sh
+```
+
+### What `uninstall.sh` Does:
+1. **Stops & Disables Services:** Stops and disables `bird` and `unbound` services.
+2. **Restores Configuration Backups:** Restores the most recent pre-deployment timestamped backups (`-old-YYYYMMDD-HHMMSS`) for `/etc/bird/bird.conf`, `/etc/unbound/unbound.conf`, and `/etc/nftables.conf` (or flushes nftables if no backup is found).
+3. **Unmasks Services:** Unmasks system services (`dnsmasq`, `avahi-daemon`, `cups`) that were masked during installation.
+4. **Cleans Up Kernel Parameters:** Removes the custom sysctl entries added to `/etc/sysctl.conf` and re-applies system defaults.
+
+### Post-Uninstallation Steps:
+- **Remove Packages:** `bird2` and `unbound` packages remain installed on your system. To purge them entirely, run:
+  ```bash
+  sudo apt remove --purge bird2 unbound
+  ```
+- **Deploy Replacement Firewall:** Because firewall rules are reset or flushed during uninstallation, your system may have an open or default network policy. Immediately install and configure a replacement firewall manager (such as `ufw` or `firewalld`) to secure your system:
+  ```bash
+  sudo apt install -y ufw && sudo ufw enable
+  ```
